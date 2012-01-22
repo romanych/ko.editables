@@ -1,0 +1,3 @@
+[submodule "knockout"]
+	path = knockout
+	url = git://github.com/SteveSanderson/knockout.git
