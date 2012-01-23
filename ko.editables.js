@@ -46,6 +46,7 @@ Exports:
         target.rollback = function () {
             if (inTransaction()) {
                 target(oldValue);
+				inTransaction(false);
             }
         };
 
