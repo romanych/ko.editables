@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ko.editables sample</title>
+    <script src="https://raw.github.com/SteveSanderson/knockout/master/build/output/knockout-latest.js" type="text/javascript"></script>
+    <script src="https://raw.github.com/romanych/ko.editables/master/ko.editables.js" type="text/javascript"></script>
+    <style type="text/css">
+        body, input { font-family: arial; font-size: 14px; }
+
+.grid { margin-bottom: 1em; width: 40em; border: 1px solid silver; background-color:White; }
+.grid th { text-align:left; background-color: Black; color:White; }
+.grid td, th { padding: 0.4em; vertical-align: top;}
+.grid tr.odd { background-color: #DDD; }
+
+li { list-style-type: none; margin-left: 0; }
+ul { margin: 0;padding: 0;}
+
+fieldset {
+    margin-bottom: 1em; width: 37em; border: 1px solid silver; background-color:White;
+    padding: 1.4em;
+}
+
+fieldset legend {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+fieldset label 
+{
+    float: left;
+    width: 6em;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+input[type="text"] { width: 300px; }
+    </style>
+</head>
+<body>
+    <div>
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Address
+                    </th>
+                    <th>
+                        Phones
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: Contacts">
+                <tr>
+                    <td data-bind="text: FullName">
+                    </td>
+                    <td data-bind="text: AddressString">
+                    </td>
+                    <td>
+                        <ul data-bind="foreach: Phones">
+                            <li><small data-bind="text: Title"></small> <span data-bind="text: Number"></span></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <a href="#edit" data-bind="click: $parent.Edit">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div data-bind="with: EditingPerson">
+            <form data-bind="submit: $parent.Update">
+            </form>
+            <fieldset>
+                <legend data-bind="text: FullName"></legend>
+                <label for="firstName">
+                    First name:</label>
+                <input type="text" data-bind="value: FirstName, valueUpdate: 'afterkeydown'" id="firstName" /><br />
+                <label for="lastName">
+                    Last name:</label>
+                <input type="text" data-bind="value: LastName, valueUpdate: 'afterkeydown'" id="lastName" /><br />
+                <label for="country">
+                    Country:</label>
+                <input type="text" data-bind="value: Address.Country, valueUpdate: 'afterkeydown'" id="country" /><br />
+                <label for="city">
+                    City:</label>
+                <input type="text" data-bind="value: Address.City, valueUpdate: 'afterkeydown'" id="city" /><br />
+                <h3>
+                    Phones</h3>
+                <div data-bind="foreach: Phones">
+                    <input type="text" data-bind="value: Title, valueUpdate: 'afterkeydown'" />
+                    <input type="text" data-bind="value: Number, valueUpdate: 'afterkeydown'" /><br />
+                </div>
+                <a href="#add-phone" data-bind="click: AddPhone">Add phone</a>
+                <br />
+                <br />
+                <input type="submit" value="Save" data-bind="enable: hasChanges" />
+                or <a href="#cancel" data-bind="click: $parent.Cancel">cancel</a>
+            </fieldset>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var Person = function (firstName, lastName, address, phones) {
+            var self = this;
+            self.FirstName = ko.observable(firstName);
+            self.LastName = ko.observable(lastName);
+            // 
+            self.Phones = ko.observableArray(ko.utils.arrayMap(phones, function (phone) {
+                return { Number: ko.observable(phone.number), Title: ko.observable(phone.title) };
+            }));
+            self.Address = {
+                Country: ko.observable(address.country),
+                City: ko.observable(address.city)
+            };
+
+            self.FullName = ko.dependentObservable(function () {
+                return self.FirstName() + ' ' + self.LastName();
+            });
+            self.AddressString = ko.dependentObservable(function () {
+                return self.Address.Country() + ', ' + self.Address.City();
+            });
+
+            ko.editable(self);
+
+            self.AddPhone = function () {
+                self.Phones.push({ Number: ko.observable(), Title: ko.observable() });
+            };
+        };
+
+        var viewModel = new function () {
+            var self = this;
+            self.Contacts = [
+                    new Person('Eduard', 'Trapeznichenko', { country: 'USA', city: 'New York' }, [{ title: 'Mobile', number: '(123) 456-78-90'}]),
+                    new Person('Peter', 'Archibald', { country: 'Ukraine', city: 'Kiev' }, [{ title: 'Mobile', number: '(012) 345-67-89' }, { title: 'Work', number: '(212) 777-77-77'}])
+                ];
+
+            self.EditingPerson = ko.observable();
+
+            self.Edit = function (person) {
+                var currentEdititngPerson = self.EditingPerson();
+                if (currentEdititngPerson) {
+                    currentEdititngPerson.rollback();
+                }
+                person.beginEdit();
+                self.EditingPerson(person);
+            };
+
+            self.Update = function () {
+                self.EditingPerson().commit();
+                self.EditingPerson(undefined);
+            };
+
+            self.Cancel = function () {
+                self.EditingPerson().rollback();
+                self.EditingPerson(undefined);
+            };
+        } ();
+
+        ko.applyBindings(viewModel);
+    </script>
+</body>
+</html>
