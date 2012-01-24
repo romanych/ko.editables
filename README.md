@@ -3,6 +3,8 @@
 This is plugin for KnockoutJS which allows to accept or rollback changes on observables or view models.
 It is extremely easy to use solution suitable in most use cases.
 
+You could find examples of usage on http://romanych.github.com/ko.editables/
+
 editable extender
 -----------------
 
@@ -70,4 +72,5 @@ Example:
 
 *Tip*: if you are using view models based on classes the best practice is to call
 `ko.editable(this)` when all data properties are defined
+
 
