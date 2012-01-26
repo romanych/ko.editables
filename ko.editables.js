@@ -59,6 +59,9 @@ Exports:
         var inTransaction = ko.observable(false);
 
         target.beginEdit = function () {
+            if (inTransaction()) {
+        	return;
+            }
             var currentValue = target();
             if (currentValue instanceof Array) {
                 currentValue = currentValue.slice(); // make copy
