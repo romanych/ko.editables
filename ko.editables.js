@@ -1,4 +1,7 @@
-﻿// editable extender and ko.editable plugin for viewModels
+﻿// ko.editables v0.9 for KnockoutJS
+// https://github.com/romanych/ko.editables/
+// http://romanych.github.com/ko.editables/
+// editable extender and ko.editable plugin for viewModels
 // (c) Roman Gomolko - rgomolko@gmail.com
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
 
@@ -19,21 +22,47 @@ Exports:
         return ko.dependentObservable({ read: readFunction, deferEvaluation: true });
     };
 
+    var comparers = {
+        'scalar': function (actualValue, originalValue) {
+            return actualValue == originalValue;
+        },
+        'array': function (actualValue, originalValue) {
+            actualValue = actualValue || [];
+            originalValue = originalValue || [];
+            if (actualValue.length != originalValue.length) {
+                return false;
+            }
+            for (var i = 0; i < actualValue.length; i++) {
+                if (actualValue[i] !== originalValue[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
     ko.extenders['editable'] = function (target, enabledEditable) {
         enabledEditable = enabledEditable === undefined ? true : enabledEditable;
         // Protect from double initialization
         if (target.hasOwnProperty('editable')) {
             return target;
         }
+
         target.editable = enabledEditable;
 
+        if (!enabledEditable) {
+            return target;
+        }
+
         var oldValue;
+        var equalityComparer = comparers['scalar'];
         var inTransaction = ko.observable(false);
 
         target.beginEdit = function () {
             var currentValue = target();
             if (currentValue instanceof Array) {
                 currentValue = currentValue.slice(); // make copy
+                equalityComparer = comparers['array'];
             }
             oldValue = currentValue;
             inTransaction(true);
@@ -46,12 +75,12 @@ Exports:
         target.rollback = function () {
             if (inTransaction()) {
                 target(oldValue);
-				inTransaction(false);
+                inTransaction(false);
             }
         };
 
         target.hasChanges = deferredDependentObservable(function () {
-            var hasChanges = inTransaction() && oldValue != target();
+            var hasChanges = inTransaction() && !equalityComparer(target(), oldValue);
             return hasChanges;
         });
 
@@ -92,6 +121,7 @@ Exports:
             var editableWithChanges = ko.utils.arrayFirst(editables(), function (editable) {
                 return editable.hasChanges();
             });
+            console.debug(editableWithChanges);
             return editableWithChanges != null;
         });
 
