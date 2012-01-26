@@ -141,12 +141,22 @@ input[type="text"] { width: 300px; }
 
             self.Edit = function (person) {
                 var currentEdititngPerson = self.EditingPerson();
-                if (currentEdititngPerson) {
-                    currentEdititngPerson.rollback();
+
+                if (currentEdititngPerson && currentEdititngPerson != person) {
+                    if (currentEdititngPerson.hasChanges()) {
+                        if (confirm('Your have unsaved changes. Press Ok to cancel these changes. Press Cancel to continue editing')) {
+                            currentEdititngPerson.rollback();
+                        } else {
+                            return;
+                        }
+                    };
                 }
+
+                ko.editable(person);
                 person.beginEdit();
                 self.EditingPerson(person);
             };
+
 
             self.Update = function () {
                 self.EditingPerson().commit();
