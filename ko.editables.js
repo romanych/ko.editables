@@ -124,7 +124,6 @@ Exports:
             var editableWithChanges = ko.utils.arrayFirst(editables(), function (editable) {
                 return editable.hasChanges();
             });
-            console.debug(editableWithChanges);
             return editableWithChanges != null;
         });
 
