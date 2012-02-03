@@ -77,51 +77,91 @@ input[type="text"] { width: 300px; }
                 <input type="text" data-bind="value: AddressString, valueUpdate: 'afterkeydown'" id="address" /><br />
                 <br />
                 <br />
-                <input type="submit" value="Save" data-bind="enable: hasChanges" />
+                <input type="submit" value="Save" data-bind="enable: hasChanges, click: $parent.Update" />
                 or <a href="#cancel" data-bind="click: $parent.Cancel">cancel</a>
             </fieldset>
         </div>
     </div>
     <script type="text/javascript">
-        var viewModel = new function () {
-            var self = this;
-            self.Contacts = [
-                    { FullName: ko.observable('Eduard Trapeznichenko'), AddressString: ko.observable('USA, New York') },
-                    { FullName: ko.observable('Peter Archibald'), AddressString: ko.observable('Ukraine Kiev') }
-                ];
+var viewModel = new function () {
+    var self = this;
+    self.Contacts = [
+            { FullName: ko.observable('Eduard Trapeznichenko'), AddressString: ko.observable('USA, New York') },
+            { FullName: ko.observable('Peter Archibald'), AddressString: ko.observable('Ukraine Kiev') }
+        ];
 
-            self.EditingPerson = ko.observable();
+    self.EditingPerson = ko.observable();
 
-            self.Edit = function (person) {
-                var currentEdititngPerson = self.EditingPerson();
-    			
-                if (currentEdititngPerson && currentEdititngPerson != person) {
-					if (currentEdititngPerson.hasChanges()) {
-						if (confirm('Your have unsaved changes. Press Ok to cancel these changes. Press Cancel to continue editing')) {
-							currentEdititngPerson.rollback();
-						} else {
-							return;
-						}
-					};
-                }
-				
-                ko.editable(person);
-                person.beginEdit();
-                self.EditingPerson(person);
-            };
+    self.Edit = function (person) {
+    	var currentEdititngPerson = self.EditingPerson();
 
-            self.Update = function () {
-                self.EditingPerson().commit();
-                self.EditingPerson(undefined);
-            };
+    	if (currentEdititngPerson && currentEdititngPerson != person) {
+    		if (currentEdititngPerson.hasChanges()) {
+    			if (confirm('Your have unsaved changes. Press Ok to cancel these changes. Press Cancel to continue editing')) {
+    				currentEdititngPerson.rollback();
+    			} else {
+    				return;
+    			}
+    		};
+    	}
 
-            self.Cancel = function () {
-                self.EditingPerson().rollback();
-                self.EditingPerson(undefined);
-            };
-        } ();
+    	ko.editable(person);
+    	person.beginEdit();
+    	self.EditingPerson(person);
+    };
+
+    self.Update = function () {
+    	self.EditingPerson().commit();
+    	self.EditingPerson(undefined);
+    };
+
+    self.Cancel = function () {
+    	self.EditingPerson().rollback();
+    	self.EditingPerson(undefined);
+    };
+} ();
 
         ko.applyBindings(viewModel);
     </script>
+
+	<h2>View model code</h2>
+	<pre style='color:#000000;background:#ffffff;'><span style='color:#800000; font-weight:bold; '>var</span> viewModel <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>new</span> <span style='color:#800000; font-weight:bold; '>function</span> <span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+    <span style='color:#800000; font-weight:bold; '>var</span> self <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#800080; '>;</span>
+    self<span style='color:#808030; '>.</span>Contacts <span style='color:#808030; '>=</span> <span style='color:#808030; '>[</span>
+            <span style='color:#800080; '>{</span> FullName<span style='color:#800080; '>:</span> ko<span style='color:#808030; '>.</span>observable<span style='color:#808030; '>(</span><span style='color:#0000e6; '>'Eduard Trapeznichenko'</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> AddressString<span style='color:#800080; '>:</span> ko<span style='color:#808030; '>.</span>observable<span style='color:#808030; '>(</span><span style='color:#0000e6; '>'USA, New York'</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
+            <span style='color:#800080; '>{</span> FullName<span style='color:#800080; '>:</span> ko<span style='color:#808030; '>.</span>observable<span style='color:#808030; '>(</span><span style='color:#0000e6; '>'Peter Archibald'</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> AddressString<span style='color:#800080; '>:</span> ko<span style='color:#808030; '>.</span>observable<span style='color:#808030; '>(</span><span style='color:#0000e6; '>'Ukraine Kiev'</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>}</span>
+        <span style='color:#808030; '>]</span><span style='color:#800080; '>;</span>
+
+    self<span style='color:#808030; '>.</span>EditingPerson <span style='color:#808030; '>=</span> ko<span style='color:#808030; '>.</span>observable<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+
+    self<span style='color:#808030; '>.</span>Edit <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>function</span> <span style='color:#808030; '>(</span>person<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+        <span style='color:#800000; font-weight:bold; '>var</span> currentEdititngPerson <span style='color:#808030; '>=</span> self<span style='color:#808030; '>.</span>EditingPerson<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+
+        <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>currentEdititngPerson <span style='color:#808030; '>&amp;&amp;</span> currentEdititngPerson <span style='color:#808030; '>!=</span> person<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+            <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>currentEdititngPerson<span style='color:#808030; '>.</span>hasChanges<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+                <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>confirm<span style='color:#808030; '>(</span><span style='color:#0000e6; '>'Your have unsaved changes. Press Ok to cancel these changes. Press Cancel to continue editing'</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+                    currentEdititngPerson<span style='color:#808030; '>.</span>rollback<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+                <span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800080; '>{</span>
+                    <span style='color:#800000; font-weight:bold; '>return</span><span style='color:#800080; '>;</span>
+                <span style='color:#800080; '>}</span>
+            <span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+        <span style='color:#800080; '>}</span>
+
+        <strong>ko<span style='color:#808030; '>.</span>editable<span style='color:#808030; '>(</span>person<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span> // since we do not have separate class for view model we enable ko.editables before edit itself.</strong>
+        person<span style='color:#808030; '>.</span>beginEdit<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+        self<span style='color:#808030; '>.</span>EditingPerson<span style='color:#808030; '>(</span>person<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+    <span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+
+    self<span style='color:#808030; '>.</span>Update <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>function</span> <span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+        self<span style='color:#808030; '>.</span>EditingPerson<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>commit<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+        self<span style='color:#808030; '>.</span>EditingPerson<span style='color:#808030; '>(</span>undefined<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+    <span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+
+    self<span style='color:#808030; '>.</span>Cancel <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>function</span> <span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+        self<span style='color:#808030; '>.</span>EditingPerson<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>rollback<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+        self<span style='color:#808030; '>.</span>EditingPerson<span style='color:#808030; '>(</span>undefined<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+    <span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+<span style='color:#800080; '>}</span> <span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+</pre>
 </body>
 </html>
