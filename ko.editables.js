@@ -17,7 +17,21 @@ Editable adds following methods into observables and objects:
 - hasChanges() - observable
 */
 
-(function (ko, undefined) {
+(function (factory) {
+	// Module systems magic dance.
+
+	if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
+		// CommonJS or Node: hard-coded dependency on "knockout"
+		factory(require("knockout"), exports);
+	} else if (typeof define === "function" && define["amd"]) {
+		// AMD anonymous module with hard-coded dependency on "knockout"
+		define(["knockout", "exports"], factory);
+	} else {
+		// <script> tag: use the global `ko` object, attaching a `mapping` property
+		factory(ko)
+	}
+
+}(function (ko, undefined) {
 	var deferredDependentObservable = function (readFunction) {
 		return ko.dependentObservable({ read: readFunction, deferEvaluation: true });
 	};
@@ -259,4 +273,4 @@ Editable adds following methods into observables and objects:
 			return ko.editable.hasChanges(scope);
 		}).extend({ throttle: 100 });
 	};
-})(ko);
+}));
