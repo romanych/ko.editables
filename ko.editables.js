@@ -6,7 +6,7 @@
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
 
 /*
-Exports: 
+Exports:
 ko.extenders.editable: ko.observable().extend({editable: true|false});
 ko.editable: ko.editable(objectWithObservables, boolean autoInit);
 
@@ -216,6 +216,12 @@ Editable adds following methods into observables and objects:
 				return editable.hasChanges();
 			});
 			return editableWithChanges != null;
+		});
+
+		viewModel.inTransaction = ko.computed(function () {
+			return ko.utils.arrayFilter(allEditables(), function(editable) {
+				return editable.inTransaction();
+			}).length === allEditables().length;
 		});
 
 		var scope = newScope();
