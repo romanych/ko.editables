@@ -1,0 +1,22 @@
+{
+  "name": "romanych/ko.editables",
+  "main": "ko.editables.js",
+  "homepage": "https://romanych.github.io/ko.editables/",
+  "description": "This is plugin for KnockoutJS which allows to accept or rollback changes on observables or view models.",
+  "keywords": [
+    "ko",
+    "knockout",
+    "editable"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "^3.4.0"
+  }
+}
