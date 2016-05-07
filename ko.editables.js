@@ -31,7 +31,7 @@ Editable adds following methods into observables and objects:
 		factory(ko)
 	}
 
-}(function (ko, undefined) {
+}(function (ko) {
 	var deferredDependentObservable = function (readFunction) {
 		return ko.dependentObservable({ read: readFunction, deferEvaluation: true });
 	};
