@@ -1,0 +1,17 @@
+{
+  "name": "ko.editables",
+  "version": "0.9.0",
+  "description": "editable extender and ko.editable plugin for viewModels",
+  "main": "ko.editables.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romanych/ko.editables"
+  },
+  "keywords": ["ko", "knockout"],
+  "author": "Roman Gomolko <rgomolko@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/romanych/ko.editables/issues"
+  },
+  "homepage": "https://github.com/romanych/ko.editables"
+}
